@@ -30,6 +30,8 @@ namespace Bitirme_Projesi.Models
 		public decimal PostLat { get; set; }
 		public decimal PostLng { get; set; }
 
+		public string LocationName { get; set; }
+
 		public string InitialPhotoPath { get; set; }
 		public string AfterPhotoPath { get; set; }
 		public int TaskPoint { get; set; }

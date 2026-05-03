@@ -41,14 +41,17 @@ public partial class PostDetailPage : ContentPage
 		{
 			if (!string.IsNullOrEmpty(PostId))
 			{
-				// Gönderi Detayını Çek
 				var detail = await _postService.GetPostDetailAsync(Guid.Parse(PostId));
 				if (detail != null)
 				{
+					// VİTRİNE KOYMADAN ÖNCE ADRESİ ÇÖZÜMLÜYORUZ
+					// PostLat ve PostLng decimal olduğu için double'a cast ediyoruz
+					detail.LocationName = await GetReadableLocationAsync((double)detail.PostLat, (double)detail.PostLng);
+
+					// Veriyi BindingContext'e veriyoruz, ekran anında güncelleniyor
 					this.BindingContext = detail;
 				}
 
-				// Yorumları Çek
 				var comments = await _commentService.GetCommentsByPostIdAsync(Guid.Parse(PostId));
 				_comments.Clear();
 				foreach (var comment in comments)
@@ -61,6 +64,42 @@ public partial class PostDetailPage : ContentPage
 		{
 			System.Diagnostics.Debug.WriteLine($"Veri yükleme hatası: {ex.Message}");
 		}
+	}
+
+	private async Task<string> GetReadableLocationAsync(double lat, double lng)
+	{
+		try
+		{
+			// Eğer kordinatlar 0 ise boşuna arama yapmasın
+			if (lat == 0 && lng == 0)
+				return "📍 Konum Belirtilmemiş";
+
+			// MAUI'nin yerleşik servisi ile koordinatları gönder, adres bilgilerini al
+			var placemarks = await Geocoding.Default.GetPlacemarksAsync(lat, lng);
+			var placemark = placemarks?.FirstOrDefault();
+
+			if (placemark != null)
+			{
+				// placemark nesnesinin içinde İl, İlçe, Mahalle, Sokak her şey var.
+				// Örnek format: "Beşiktaş, İstanbul"
+				string district = placemark.SubAdminArea ?? placemark.Locality; // İlçe
+				string city = placemark.AdminArea; // İl
+
+				if (!string.IsNullOrEmpty(district) && !string.IsNullOrEmpty(city))
+				{
+					return $"📍 {district}, {city}";
+				}
+
+				// Eğer il/ilçe bulamazsa sadece ülkeyi veya bilinen en iyi ismi yazsın
+				return $"📍 {placemark.CountryName ?? placemark.FeatureName}";
+			}
+		}
+		catch (Exception ex)
+		{
+			System.Diagnostics.Debug.WriteLine($"Geocoding hatası: {ex.Message}");
+		}
+
+		return "📍 Konum Bulunamadı";
 	}
 	// Yorum Penceresini Aç
 	private void OnOpenCommentPopupClicked(object sender, EventArgs e)
