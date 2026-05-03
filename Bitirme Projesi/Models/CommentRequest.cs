@@ -18,7 +18,6 @@ namespace Bitirme_Projesi.Models
 		{
 			get
 			{
-				// Eğer path boşsa varsayılan avatarı kullan
 				if (string.IsNullOrEmpty(ProfilePhotoPath))
 					return "user_avatar.png";
 
