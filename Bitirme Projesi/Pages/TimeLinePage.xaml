@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8" ?>  
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Bitirme_Projesi.Pages.TimeLinePage"        
+             xmlns:controls="clr-namespace:Bitirme_Projesi.Pages.Views"
+             Shell.FlyoutBehavior="Disabled"
+             BackgroundColor="#F8F9F2"
+             Title="">
+    
+    <ContentPage.Resources>
+        <DataTemplate x:Key="GorevKartiSablonu">
+            <Border Margin="15,10" 
+            StrokeShape="RoundRectangle 15" 
+            BackgroundColor="White" 
+            StrokeThickness="0">
+                <Border.Shadow>
+                    <Shadow Brush="Black" Offset="0,3" Radius="6" Opacity="0.1" />
+                </Border.Shadow>
+
+                <VerticalStackLayout Spacing="10" Padding="0,15,0,0">
+
+                    <VerticalStackLayout Padding="15,0" Spacing="2">
+                        <Label Text="{Binding Baslik}" 
+                       FontSize="18" 
+                       FontAttributes="Bold" 
+                       TextColor="#1B4332" />
+
+                        <HorizontalStackLayout Spacing="5">
+                            <Image Source="leaf_icon.png" HeightRequest="14" WidthRequest="14" VerticalOptions="Center" />
+                            <Label Text="{Binding Puan, StringFormat='{0} Puan Kazandırdı'}" 
+                           FontSize="13" 
+                           TextColor="#40916C" 
+                           FontAttributes="Bold" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+
+                    <Image Source="{Binding ResimUrl}" 
+                   Aspect="AspectFill" 
+                   HeightRequest="220" 
+                   HorizontalOptions="Fill" />
+
+                    <Label Text="{Binding Aciklama}" 
+                   Padding="15,0" 
+                   FontSize="14" 
+                   TextColor="#4A4A4A" 
+                   LineBreakMode="TailTruncation" 
+                   MaxLines="2" />
+
+                    <Grid ColumnDefinitions="Auto, Auto, Auto, *" Padding="15,5,15,15" ColumnSpacing="20">
+
+                        <HorizontalStackLayout Grid.Column="0" Spacing="6" VerticalOptions="Center">
+                            <Image Source="like.png" HeightRequest="22" WidthRequest="22" />
+                            <Label Text="Beğen" VerticalOptions="Center" TextColor="#707070" FontSize="13" FontAttributes="Bold"/>
+                        </HorizontalStackLayout>
+
+                        <HorizontalStackLayout Grid.Column="1" Spacing="6" VerticalOptions="Center">
+                            <Image Source="coment.png" HeightRequest="22" WidthRequest="22" />
+                            <Label Text="Yorumlar" VerticalOptions="Center" TextColor="#707070" FontSize="13" FontAttributes="Bold"/>
+                        </HorizontalStackLayout>
+
+                        <HorizontalStackLayout Grid.Column="2" Spacing="6" VerticalOptions="Center">
+                            <HorizontalStackLayout.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnOpenPostTapped" />
+                            </HorizontalStackLayout.GestureRecognizers>
+                            <Image Source="eye_icon.png" HeightRequest="22" WidthRequest="22" />
+                            <Label Text="Aç" VerticalOptions="Center" TextColor="#2D6A4F" FontSize="13" FontAttributes="Bold"/>
+                        </HorizontalStackLayout>
+
+                        <ImageButton Grid.Column="3" 
+                             Source="more_vertical.png" 
+                             HeightRequest="22" 
+                             WidthRequest="22" 
+                             HorizontalOptions="End" 
+                             BackgroundColor="Transparent" />
+                    </Grid>
+
+                </VerticalStackLayout>
+            </Border>
+        </DataTemplate>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto, Auto, * , Auto">
+
+        <controls:HeaderViews Grid.Row="0" Margin="0,30,0,0"/>
+
+        <Grid Grid.Row="1" ColumnDefinitions="*, *" Padding="20,10" ColumnSpacing="15">
+
+            <Button x:Name="BtnYakindakiler" 
+            Text="Yakindakiler"
+            Clicked="OnTabClicked"
+            CommandParameter="Yakindaki" 
+            BackgroundColor="#2D6A4F" 
+            TextColor="White"
+            CornerRadius="12" />
+
+            <Button x:Name="BtnOnerilenler" 
+            Grid.Column="1"
+            Text="Önerilenler"
+            Clicked="OnTabClicked"
+            CommandParameter="Onerilen" 
+            BackgroundColor="Transparent" 
+            TextColor="#2D6A4F"
+            BorderColor="#2D6A4F"
+            BorderWidth="1"
+            CornerRadius="12" />
+        </Grid>
+
+        <Grid Grid.Row="2">
+
+            <CollectionView x:Name="ColYakindakiler" 
+                            IsVisible="True" 
+                            ItemTemplate="{StaticResource GorevKartiSablonu}">
+            </CollectionView>
+
+            <CollectionView x:Name="ColOnerilenler" 
+                            IsVisible="False" 
+                            ItemTemplate="{StaticResource GorevKartiSablonu}">
+            </CollectionView>
+
+        </Grid>
+
+        <controls:NavigationBar Grid.Row="3"/>
+
+    </Grid>
+</ContentPage>

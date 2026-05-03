@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Bitirme_Projesi.Pages.RegisterPage"
+             Title="RegisterPage">
+    <ScrollView>
+        <VerticalStackLayout Padding="30" Spacing="15" VerticalOptions="Center">
+
+            <Image Source="login_photo.png"
+                   HeightRequest="100"
+                   HorizontalOptions="Center"
+                   Margin="0,10,0,0" />
+
+            <Label Text="Yeni Kahraman Ol"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   TextColor="#1B4332"
+                   HorizontalTextAlignment="Center" />
+
+            <Label Text="Doğayı korumak için aramıza katıl!"
+                   FontSize="14"
+                   TextColor="#40916C"
+                   HorizontalTextAlignment="Center"
+                   Margin="0,-10,0,10" />
+
+            <VerticalStackLayout Spacing="5">
+                <Label Text="Ad Soyad" TextColor="#2D6A4F" FontSize="13" Margin="5,0" />
+                <Border Stroke="#74C69D" StrokeThickness="1.5" StrokeShape="RoundRectangle 15" BackgroundColor="White" Padding="15,2" HeightRequest="55">
+                    <Entry x:Name="FullNameEntry" Placeholder="Adınızı ve soyadınızı girin" TextColor="#1B4332" VerticalOptions="Center" />
+                </Border>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="5">
+                <Label Text="E-posta" TextColor="#2D6A4F" FontSize="13" Margin="5,0" />
+                <Border Stroke="#74C69D" StrokeThickness="1.5" StrokeShape="RoundRectangle 15" BackgroundColor="White" Padding="15,2" HeightRequest="55">
+                    <Entry x:Name="EmailEntry" Placeholder="ornek@email.com" Keyboard="Email" TextColor="#1B4332" VerticalOptions="Center" />
+                </Border>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="5">
+                <Label Text="Şifre Oluştur" TextColor="#2D6A4F" FontSize="13" Margin="5,0" />
+                <Border Stroke="#74C69D" StrokeThickness="1.5" StrokeShape="RoundRectangle 15" BackgroundColor="White" Padding="15,2" HeightRequest="55">
+                    <Entry x:Name="PasswordEntry" Placeholder="••••••••" IsPassword="True" TextColor="#1B4332" VerticalOptions="Center" />
+                </Border>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="5">
+                <Label Text="Şifre Tekrar" TextColor="#2D6A4F" FontSize="13" Margin="5,0" />
+                <Border Stroke="#74C69D" StrokeThickness="1.5" StrokeShape="RoundRectangle 15" BackgroundColor="White" Padding="15,2" HeightRequest="55">
+                    <Entry x:Name="ConfirmPasswordEntry" Placeholder="••••••••" IsPassword="True" TextColor="#1B4332" VerticalOptions="Center" />
+                </Border>
+            </VerticalStackLayout>
+
+            <Button Text="HESABIMI OLUŞTUR"
+                    BackgroundColor="#2D6A4F"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    CornerRadius="15"
+                    HeightRequest="55"
+                    Margin="0,15,0,0"
+                    Clicked="OnSignUpClicked" />
+
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="5">
+                <Label Text="Zaten hesabın var mı?" TextColor="#1B4332" VerticalOptions="Center" />
+                <Button Text="Giriş Yap" 
+                        TextColor="#2D6A4F" 
+                        FontAttributes="Bold"
+                        BackgroundColor="Transparent"
+                        Padding="0"
+                        Clicked="OnBackToLoginClicked" />
+            </HorizontalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Bitirme_Projesi.Pages.ComplateQuestPage"
+             xmlns:controls="clr-namespace:Bitirme_Projesi.Pages.Views"
+             Shell.FlyoutBehavior="Disabled"
+             BackgroundColor="#F8F9F2">
+
+    <Grid RowDefinitions="Auto, *">
+
+        <VerticalStackLayout Grid.Row="0" BackgroundColor="White" Padding="20,40,20,15">
+            <Label Text="GÖREVİ TAMAMLA" FontSize="11" TextColor="#707070" FontAttributes="Bold" HorizontalOptions="Center" CharacterSpacing="1"/>
+            <Label x:Name="LblQuestName" 
+                   Text="Yükleniyor..." 
+                   FontSize="22" 
+                   FontAttributes="Bold" 
+                   TextColor="#1B4332" 
+                   HorizontalOptions="Center" 
+                   HorizontalTextAlignment="Center" />
+        </VerticalStackLayout>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="20" Spacing="20">
+
+                <Label Text="Temizlenmiş Alanın Fotoğrafı" FontAttributes="Bold" TextColor="#1B4332" Margin="5,0" />
+                <Border StrokeShape="RoundRectangle 20" HeightRequest="250" BackgroundColor="White" StrokeThickness="2" StrokeDashArray="4,2" Stroke="#2D6A4F">
+                    <Image x:Name="ImgAfter" Source="camera_placeholder.png" Aspect="AspectFill" />
+                </Border>
+
+                <Grid ColumnDefinitions="*, *" ColumnSpacing="15">
+                    <Button Text="Kamera" BackgroundColor="#2D6A4F" TextColor="White" CornerRadius="12" Clicked="OnCameraClicked" />
+                    <Button Grid.Column="1" Text="Galeri" BackgroundColor="White" TextColor="#2D6A4F" BorderColor="#2D6A4F" BorderWidth="1" CornerRadius="12" Clicked="OnGalleryClicked" />
+                </Grid>
+
+                <Border StrokeShape="RoundRectangle 15" BackgroundColor="#E8F5E9" Padding="15" StrokeThickness="0">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Konum Kanıtı" FontAttributes="Bold" TextColor="#1B4332" />
+                        <Label x:Name="LblLocation" Text="Konum henüz doğrulanmadı..." TextColor="#4A4A4A" FontSize="13" />
+                        <Button x:Name="BtnVerifyLocation" Text="ŞİMDİKİ KONUMU ONAYLA" BackgroundColor="#40916C" TextColor="White" CornerRadius="10" Clicked="OnVerifyLocationClicked" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Neler Yaptın?" FontAttributes="Bold" TextColor="#1B4332" Margin="5,0" />
+                    <Border StrokeShape="RoundRectangle 12" StrokeThickness="1" Stroke="#E0E0E0" BackgroundColor="White" Padding="10">
+                        <Editor x:Name="EdiDescription" 
+                                Placeholder="Örn: Tüm plastik şişeler toplandı ve geri dönüşüme atıldı." 
+                                PlaceholderColor="#A0A0A0"
+                                HeightRequest="120"
+                                AutoSize="TextChanges" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="10" Margin="0,10,0,30">
+                    <Button Text="GÖREVİ BİTİR VE PUAN KAZAN" 
+                            BackgroundColor="#1B4332" 
+                            TextColor="White" 
+                            FontAttributes="Bold" 
+                            HeightRequest="60" 
+                            CornerRadius="15" 
+                            Clicked="OnFinishQuestClicked" />
+
+                    <Button Text="Vazgeç" BackgroundColor="Transparent" TextColor="#BC4749" Clicked="OnCancelClicked" />
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

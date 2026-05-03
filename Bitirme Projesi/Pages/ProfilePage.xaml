@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Bitirme_Projesi.Pages.ProfilePage"
+             xmlns:controls="clr-namespace:Bitirme_Projesi.Pages.Views"
+             Shell.FlyoutBehavior="Disabled"
+             BackgroundColor="#F8F9F2"
+             Title="">
+
+    <Grid RowDefinitions="Auto, *, Auto" BackgroundColor="#F8F9F2">
+
+        <controls:HeaderViews Grid.Row="0" Margin="0,30,0,0" />
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="20" Spacing="25">
+
+                <VerticalStackLayout Spacing="10" HorizontalOptions="Center">
+                    <Border StrokeShape="RoundRectangle 60" 
+                            HeightRequest="120" WidthRequest="120" 
+                            StrokeThickness="3" Stroke="#2D6A4F"
+                            BackgroundColor="White">
+                        <Image x:Name="ImgProfile" Source="user_avatar.png" Aspect="AspectFill" />
+                    </Border>
+
+                    <Label x:Name="LblFullName" Text="Kullanıcı Adı" 
+                           FontSize="22" FontAttributes="Bold" 
+                           TextColor="#1B4332" HorizontalOptions="Center" />
+
+                    <Label x:Name="LblBio" Text="Kullanıcı Açıklama" 
+                           TextColor="#40916C" FontSize="14" FontAttributes="Bold" 
+                           HorizontalOptions="Center" Margin="0,-5,0,0"/>
+                </VerticalStackLayout>
+
+                <Border StrokeShape="RoundRectangle 20" BackgroundColor="White" Padding="20" StrokeThickness="0">
+                    <Grid ColumnDefinitions="*, *, *">
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label x:Name="LblPoints" Text="1,250" FontSize="18" FontAttributes="Bold" TextColor="#2D6A4F" HorizontalOptions="Center"/>
+                            <Label Text="Puan" FontSize="12" TextColor="#707070" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label  x:Name="LblTasks" Text="12" FontSize="18" FontAttributes="Bold" TextColor="#2D6A4F" HorizontalOptions="Center"/>
+                            <Label Text="Görev" FontSize="12" TextColor="#707070" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="2">
+                            <Label x:Name="LblPosts" Text="4" FontSize="18" FontAttributes="Bold" TextColor="#2D6A4F" HorizontalOptions="Center"/>
+                            <Label Text="Paylaşım" FontSize="12" TextColor="#707070" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+                    </Grid>
+                </Border>
+
+                <VerticalStackLayout Spacing="12">
+
+                    <Button Text="Profili Düzenle" 
+                        ImageSource="user_edit.png"
+                        ContentLayout="Left, 15"
+                        BackgroundColor="White" 
+                        TextColor="#1B4332" 
+                        HeightRequest="60"
+                        CornerRadius="15"
+                        HorizontalOptions="Fill" 
+                        Clicked="OnEditProfileClicked"/>
+
+                    <Button Text="Gönderimlerim" 
+                        ImageSource="medal_icon.png"
+                        ContentLayout="Left, 15"
+                        BackgroundColor="White" 
+                        TextColor="#1B4332" 
+                        HeightRequest="60"
+                        CornerRadius="15"
+                        HorizontalOptions="Fill" 
+                        Clicked="OnMyPostsClicked"/>
+
+                    <Button Text="Puan Mağazası" 
+                        ImageSource="store_icon.png" 
+                        ContentLayout="Left, 15"
+                        BackgroundColor="#D8F3DC" 
+                        TextColor="#1B4332" 
+                        FontAttributes="Bold"
+                        HeightRequest="60"
+                        CornerRadius="15"
+                        HorizontalOptions="Fill"
+                        BorderColor="#2D6A4F"
+                        BorderWidth="1" />
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <controls:NavigationBar Grid.Row="2" />
+
+    </Grid>
+</ContentPage>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Bitirme_Projesi.Pages.ShareQuestPage"
+             xmlns:controls="clr-namespace:Bitirme_Projesi.Pages.Views"
+             Shell.FlyoutBehavior="Disabled"
+             BackgroundColor="#F8F9F2">
+
+    <Grid RowDefinitions="Auto, *">
+
+        <VerticalStackLayout Grid.Row="0" BackgroundColor="White" Padding="20,40,20,15">
+            <Label Text="GÖNDERİYİ PAYLAŞ" FontSize="11" TextColor="#707070" FontAttributes="Bold" HorizontalOptions="Center" CharacterSpacing="1"/>
+        </VerticalStackLayout>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="20" Spacing="20">
+
+                <!-- Fotoğraflar Artık Alt Alta ve Tam Genişlikte -->
+                <VerticalStackLayout Spacing="15">
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="İlk Hali" FontSize="12" HorizontalOptions="Start" TextColor="#707070" Margin="5,0"/>
+                        <Border StrokeShape="RoundRectangle 12" StrokeThickness="0">
+                            <Image x:Name="ImgBefore" Source="dumy_photo.png" Aspect="AspectFill" HeightRequest="220" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Son Hali" FontSize="12" HorizontalOptions="Start" TextColor="#2D6A4F" FontAttributes="Bold" Margin="5,0"/>
+                        <Border StrokeShape="RoundRectangle 12" StrokeThickness="2" Stroke="#2D6A4F">
+                            <Image x:Name="ImgAfter" Source="dumy_photo.png" Aspect="AspectFill" HeightRequest="220" />
+                        </Border>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Gönderi Başlığı" FontAttributes="Bold" TextColor="#1B4332" />
+                    <Border StrokeShape="RoundRectangle 12" StrokeThickness="1" Stroke="#E0E0E0" BackgroundColor="White" Padding="15,5">
+                        <Entry x:Name="EntShareTitle" Placeholder="Harika bir temizlik yaptık!" TextColor="Black" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Açıklama" FontAttributes="Bold" TextColor="#1B4332" />
+                    <Border StrokeShape="RoundRectangle 12" StrokeThickness="1" Stroke="#E0E0E0" BackgroundColor="White" Padding="10">
+                        <Editor x:Name="EdiShareDescription" 
+                                Placeholder="Bu alanı temizlerken neler hissettiğini anlat..." 
+                                HeightRequest="100" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Kimler Görebilir kısmı silindi -->
+
+                <VerticalStackLayout Spacing="10" Margin="0,15,0,30">
+                    <Button Text="ŞİMDİ PAYLAŞ" 
+                            BackgroundColor="#2D6A4F" 
+                            TextColor="White" 
+                            FontAttributes="Bold" 
+                            HeightRequest="60" 
+                            CornerRadius="15" 
+                            Clicked="OnSharePostClicked" />
+
+                    <Button Text="İptal Et" BackgroundColor="Transparent" TextColor="#BC4749" Clicked="OnCancelClicked" />
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

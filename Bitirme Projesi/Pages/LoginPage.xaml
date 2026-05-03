@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Bitirme_Projesi.Pages.LoginPage"
+             Shell.FlyoutBehavior="Disabled"
+             
+             Title="">
+    <ScrollView>
+        <VerticalStackLayout Padding="35" Spacing="20" VerticalOptions="Center">
+
+            <Image Source="login_photo.png"
+                   HeightRequest="150"
+                   HorizontalOptions="Center"
+                   BackgroundColor="White"
+                   Margin="0,0,0,10" />
+
+            <Label Text="Çevre Temizliği"
+                   FontSize="28"
+                   FontAttributes="Bold"
+                   TextColor="#1B4332"
+                   HorizontalTextAlignment="Center" />
+
+            <Label Text="Geleceği birlikte temizleyelim"
+                   FontSize="15"
+                   TextColor="#40916C"
+                   HorizontalTextAlignment="Center"
+                   Margin="0,-10,0,20" />
+
+            <VerticalStackLayout Spacing="5">
+                <Label Text="E-posta" TextColor="#2D6A4F" FontSize="13" Margin="5,0" />
+                <Border Stroke="#74C69D"
+                        StrokeThickness="1.5"
+                        StrokeShape="RoundRectangle 15"
+                        BackgroundColor="White"
+                        Padding="15,2"
+                        HeightRequest="55">
+                    <Entry x:Name="EmailEntry"
+                           Placeholder="ornek@email.com" 
+                           Keyboard="Email"
+                           TextColor="#1B4332"
+                           PlaceholderColor="#95D5B2"
+                           VerticalOptions="Center" />
+                </Border>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="5">
+                <Label Text="Şifre" TextColor="#2D6A4F" FontSize="13" Margin="5,0" />
+                <Border Stroke="#74C69D"
+                        StrokeThickness="1.5"
+                        StrokeShape="RoundRectangle 15"
+                        BackgroundColor="White"
+                        Padding="15,2"
+                        HeightRequest="55">
+                    <Entry x:Name="PasswordEntry"
+                           Placeholder="••••••••" 
+                           IsPassword="True"
+                           TextColor="#1B4332"
+                           PlaceholderColor="#95D5B2"
+                           VerticalOptions="Center" />
+                </Border>
+            </VerticalStackLayout>
+
+            <Button Text="GİRİŞ YAP"
+                    BackgroundColor="#2D6A4F"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    CornerRadius="15"
+                    HeightRequest="55"
+                    Margin="0,15,0,0"
+                    Clicked="OnLoginClicked" />
+
+            <Button Text="KAYIT OL"
+                    BackgroundColor="Transparent"
+                    TextColor="#2D6A4F"
+                    BorderColor="#2D6A4F"
+                    BorderWidth="2"
+                    CornerRadius="15"
+                    HeightRequest="55"
+                    Clicked="OnRegisterClicked" />
+
+            <Label Text="Şifremi Unuttum" 
+                   HorizontalTextAlignment="Center"
+                   TextColor="#74C69D"
+                   FontSize="13"
+                   TextDecorations="Underline"
+                   Margin="0,10"/>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

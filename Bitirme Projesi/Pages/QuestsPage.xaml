@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Bitirme_Projesi.Pages.QuestsPage"
+             xmlns:controls="clr-namespace:Bitirme_Projesi.Pages.Views"
+             xmlns:local="clr-namespace:Bitirme_Projesi.Pages"
+             xmlns:models="clr-namespace:Bitirme_Projesi.Models" 
+             Shell.FlyoutBehavior="Disabled"
+             BackgroundColor="#F8F9F2"
+             Title="">
+
+    <ContentPage.Resources>
+        <DataTemplate x:Key="AktifGorevSablonu" x:DataType="models:ActiveTaskDto">
+            <Border Margin="15,10" StrokeShape="RoundRectangle 15" BackgroundColor="White" StrokeThickness="0">
+                <VerticalStackLayout Spacing="10" Padding="0,15,0,0">
+                    <VerticalStackLayout Padding="15,0" Spacing="2">
+                        <Label Text="{Binding Title}" FontSize="18" FontAttributes="Bold" TextColor="#1B4332" />
+                        <Label Text="{Binding CreatedAt, StringFormat='Başlama: {0:dd.MM.yyyy HH:mm}'}" FontSize="13" TextColor="#40916C" FontAttributes="Bold" />
+                    </VerticalStackLayout>
+                    <Image Source="{Binding FullPhotoUrl}" Aspect="AspectFill" HeightRequest="180" HorizontalOptions="Fill" />
+
+                    <Grid ColumnDefinitions="*, *" ColumnSpacing="10" Margin="15,0,15,15">
+
+                        <Button Grid.Column="0" 
+                            Text="İPTAL ET" 
+                            CommandParameter="{Binding Id}" 
+                            BackgroundColor="#BC4749" 
+                            TextColor="White" 
+                            CornerRadius="10" 
+                            HeightRequest="45" 
+                            Clicked="OnGorevIptalClicked"/>
+
+                        <Button Grid.Column="1" 
+                            Text="BİTİR" 
+                            CommandParameter="{Binding Id}" 
+                            BackgroundColor="#40916C" 
+                            TextColor="White" 
+                            CornerRadius="10" 
+                            HeightRequest="45" 
+                            Clicked="OnGorevibitirClicked"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+        </DataTemplate>
+
+        <DataTemplate x:Key="BirakilanGorevSablonu" x:DataType="models:AbandonedTaskDto">
+            <Border Margin="15,10" StrokeShape="RoundRectangle 15" BackgroundColor="White" StrokeThickness="0">
+                <VerticalStackLayout Spacing="10" Padding="0,15,0,0">
+                    <VerticalStackLayout Padding="15,0" Spacing="2">
+                        <Label Text="{Binding Title}" FontSize="18" FontAttributes="Bold" TextColor="#1B4332" />
+                        <Label Text="{Binding DisplayReason, StringFormat='Durum: {0}'}" FontSize="13" TextColor="#BC4749" FontAttributes="Bold" />
+                    </VerticalStackLayout>
+                    <Image Source="{Binding FullPhotoUrl}" Aspect="AspectFill" HeightRequest="180" HorizontalOptions="Fill" />
+                    <Label Text="{Binding AbandonedAt, StringFormat='İptal Tarihi: {0:dd.MM.yyyy HH:mm}'}" Padding="15,0,15,15" FontSize="12" TextColor="Gray" />
+                    <Button Grid.Column="1" 
+                        Text="SİL" 
+                        CommandParameter="{Binding Id}"
+                        BackgroundColor="Transparent" 
+                        TextColor="#BC4749" 
+                        BorderColor="#BC4749"
+                        BorderWidth="1"
+                        CornerRadius="8" 
+                        HeightRequest="35"
+                        Padding="15,0"
+                        Margin="15,0,15,15"
+                        Clicked="OnGorevSilClicked"/>
+                </VerticalStackLayout>
+            </Border>
+        </DataTemplate>
+
+        <DataTemplate x:Key="BitenGorevSablonu" x:DataType="models:CompletedTaskDto">
+            <Border Margin="15,10" StrokeShape="RoundRectangle 15" BackgroundColor="White" StrokeThickness="0">
+                <VerticalStackLayout Spacing="10" Padding="0,15,0,0">
+
+                    <VerticalStackLayout Padding="15,0" Spacing="2">
+                        <Label Text="{Binding Title}" FontSize="18" FontAttributes="Bold" TextColor="#1B4332" />
+                        <Label Text="{Binding Status, StringFormat='Durum: {0}'}" FontSize="13" TextColor="{Binding StatusColor}" FontAttributes="Bold" />
+                        <Label Text="{Binding PointDisplay}" FontSize="13" TextColor="#4A4A4A" FontAttributes="Italic" />
+                    </VerticalStackLayout>
+
+                    <Image Source="{Binding FullAfterPhotoUrl}" Aspect="AspectFill" HeightRequest="180" HorizontalOptions="Fill" />
+
+                    <Label Text="{Binding CompletedAt, StringFormat='Bitiş Tarihi: {0:dd.MM.yyyy HH:mm}'}" Padding="15,0,15,5" FontSize="12" TextColor="Gray" />
+
+                    <!-- PAYLAŞ BUTONU GÜNCELLEMESİ -->
+                    <!-- IsVisible: Sadece puan > 0 ve durum Onaylandı ise görünür -->
+                    <Button Text="GÖNDERİ OLARAK PAYLAŞ" 
+                    IsVisible="{Binding IsShareable}"
+                    CommandParameter="{Binding .}"
+                    BackgroundColor="#2D6A4F" 
+                    TextColor="White" 
+                    FontAttributes="Bold"
+                    CornerRadius="10"
+                    Margin="15,0,15,15"
+                    HeightRequest="45" 
+                    Clicked="OnShareQuestClicked"/>
+                </VerticalStackLayout>
+            </Border>
+        </DataTemplate>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto, Auto, *, Auto, Auto" BackgroundColor="#F8F9F2">
+        <controls:HeaderViews Grid.Row="0" Margin="0,30,0,0" />
+
+        <Grid Grid.Row="1" ColumnDefinitions="*, *, *" Padding="15,10" ColumnSpacing="10">
+            <Button x:Name="BtnAktif" Text="Aktif" Clicked="OnTabClicked" CommandParameter="Aktif" BackgroundColor="#2D6A4F" TextColor="White" CornerRadius="12" />
+            <Button x:Name="BtnBirakilan" Grid.Column="1" Text="Bırakılan" Clicked="OnTabClicked" CommandParameter="Birakilan" BackgroundColor="Transparent" TextColor="#2D6A4F" BorderColor="#2D6A4F" BorderWidth="1" CornerRadius="12" />
+            <Button x:Name="BtnBiten" Grid.Column="2" Text="Biten" Clicked="OnTabClicked" CommandParameter="Biten" BackgroundColor="Transparent" TextColor="#2D6A4F" BorderColor="#2D6A4F" BorderWidth="1" CornerRadius="12" />
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <CollectionView x:Name="ColAktif" IsVisible="True" ItemTemplate="{StaticResource AktifGorevSablonu}" />
+            <CollectionView x:Name="ColBirakilan" IsVisible="False" ItemTemplate="{StaticResource BirakilanGorevSablonu}" />
+
+            <CollectionView x:Name="ColBiten" 
+                IsVisible="False" 
+                ItemsSource="{Binding BitenListe}" 
+                ItemTemplate="{StaticResource BitenGorevSablonu}" />
+        </Grid>
+
+        <Button Grid.Row="3" Text="YENİ GÖREV BAŞLAT" BackgroundColor="#1B4332" TextColor="White" FontAttributes="Bold" CornerRadius="15" HeightRequest="55" Margin="15,10" VerticalOptions="End" Clicked="OnNewQuestClicked"/>
+        <controls:NavigationBar Grid.Row="4" />
+    </Grid>
+</ContentPage>
