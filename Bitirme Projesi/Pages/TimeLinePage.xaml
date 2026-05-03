@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>  
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Bitirme_Projesi.Pages.TimeLinePage"        
@@ -6,7 +6,7 @@
              Shell.FlyoutBehavior="Disabled"
              BackgroundColor="#F8F9F2"
              Title="">
-    
+
     <ContentPage.Resources>
         <DataTemplate x:Key="GorevKartiSablonu">
             <Border Margin="15,10" 
@@ -20,26 +20,30 @@
                 <VerticalStackLayout Spacing="10" Padding="0,15,0,0">
 
                     <VerticalStackLayout Padding="15,0" Spacing="2">
-                        <Label Text="{Binding Baslik}" 
+                        <!-- Baslik -> Title olarak değiştirildi -->
+                        <Label Text="{Binding Title}" 
                        FontSize="18" 
                        FontAttributes="Bold" 
                        TextColor="#1B4332" />
 
                         <HorizontalStackLayout Spacing="5">
                             <Image Source="leaf_icon.png" HeightRequest="14" WidthRequest="14" VerticalOptions="Center" />
-                            <Label Text="{Binding Puan, StringFormat='{0} Puan Kazandırdı'}" 
+                            <!-- Puan -> TaskPoint olarak değiştirildi -->
+                            <Label Text="{Binding TaskPoint, StringFormat='{0} Puan Kazandırdı'}" 
                            FontSize="13" 
                            TextColor="#40916C" 
                            FontAttributes="Bold" />
                         </HorizontalStackLayout>
                     </VerticalStackLayout>
 
-                    <Image Source="{Binding ResimUrl}" 
+                    <!-- ResimUrl -> FullAfterPhotoUrl olarak değiştirildi -->
+                    <Image Source="{Binding FullAfterPhotoUrl}" 
                    Aspect="AspectFill" 
                    HeightRequest="220" 
                    HorizontalOptions="Fill" />
 
-                    <Label Text="{Binding Aciklama}" 
+                    <!-- Aciklama -> Content olarak değiştirildi -->
+                    <Label Text="{Binding Content}" 
                    Padding="15,0" 
                    FontSize="14" 
                    TextColor="#4A4A4A" 
@@ -49,8 +53,13 @@
                     <Grid ColumnDefinitions="Auto, Auto, Auto, *" Padding="15,5,15,15" ColumnSpacing="20">
 
                         <HorizontalStackLayout Grid.Column="0" Spacing="6" VerticalOptions="Center">
+                            <!-- Tıklama olayı burası -->
+                            <HorizontalStackLayout.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnLikeTapped" />
+                            </HorizontalStackLayout.GestureRecognizers>
+
                             <Image Source="like.png" HeightRequest="22" WidthRequest="22" />
-                            <Label Text="Beğen" VerticalOptions="Center" TextColor="#707070" FontSize="13" FontAttributes="Bold"/>
+                            <Label Text="{Binding LikeCount, StringFormat='{0} Beğeni'}" VerticalOptions="Center" TextColor="#707070" FontSize="13" FontAttributes="Bold"/>
                         </HorizontalStackLayout>
 
                         <HorizontalStackLayout Grid.Column="1" Spacing="6" VerticalOptions="Center">
@@ -86,7 +95,7 @@
         <Grid Grid.Row="1" ColumnDefinitions="*, *" Padding="20,10" ColumnSpacing="15">
 
             <Button x:Name="BtnYakindakiler" 
-            Text="Yakindakiler"
+            Text="Yakındakiler"
             Clicked="OnTabClicked"
             CommandParameter="Yakindaki" 
             BackgroundColor="#2D6A4F" 
@@ -107,16 +116,27 @@
 
         <Grid Grid.Row="2">
 
-            <CollectionView x:Name="ColYakindakiler" 
-                            IsVisible="True" 
-                            ItemTemplate="{StaticResource GorevKartiSablonu}">
-            </CollectionView>
+            <!-- YAKINDAKİLER İÇİN YENİLEME EKRANI -->
+            <RefreshView x:Name="RefreshYakindakiler" 
+                         IsVisible="True" 
+                         Refreshing="OnYakindakilerRefreshing"
+                         RefreshColor="#2D6A4F">
+                <CollectionView x:Name="ColYakindakiler" 
+                                ItemTemplate="{StaticResource GorevKartiSablonu}">
+                </CollectionView>
+            </RefreshView>
 
-            <CollectionView x:Name="ColOnerilenler" 
-                            IsVisible="False" 
-                            ItemTemplate="{StaticResource GorevKartiSablonu}">
-            </CollectionView>
+            <!-- ÖNERİLENLER İÇİN YENİLEME EKRANI -->
+            <RefreshView x:Name="RefreshOnerilenler" 
+                         IsVisible="False" 
+                         Refreshing="OnOnerilenlerRefreshing"
+                         RefreshColor="#2D6A4F">
+                <CollectionView x:Name="ColOnerilenler" 
+                                ItemTemplate="{StaticResource GorevKartiSablonu}">
+                </CollectionView>
+            </RefreshView>
 
+            <!-- İlk açılışta ortada dönen büyük çarkımız aynen kalıyor -->
             <ActivityIndicator x:Name="LoadingSpinner"
                                IsRunning="False"
                                IsVisible="False"
@@ -126,7 +146,6 @@
                                WidthRequest="50"
                                HeightRequest="50"
                                ZIndex="10" />
-
         </Grid>
 
         <controls:NavigationBar Grid.Row="3"/>

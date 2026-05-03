@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+
 using Bitirme_Projesi.Models;
 using Bitirme_Projesi.Services;
 
@@ -162,8 +163,8 @@ public partial class TimeLinePage : ContentPage
 
 		if (secim == "Yakindaki")
 		{
-			ColYakindakiler.IsVisible = true;
-			ColOnerilenler.IsVisible = false;
+			RefreshYakindakiler.IsVisible = true; // ColYakindakiler yerine RefreshYakindakiler yazdık
+			RefreshOnerilenler.IsVisible = false; // ColOnerilenler yerine RefreshOnerilenler yazdık
 
 			BtnYakindakiler.BackgroundColor = Color.FromArgb("#2D6A4F");
 			BtnYakindakiler.TextColor = Colors.White;
@@ -172,8 +173,8 @@ public partial class TimeLinePage : ContentPage
 		}
 		else if (secim == "Onerilen")
 		{
-			ColYakindakiler.IsVisible = false;
-			ColOnerilenler.IsVisible = true;
+			RefreshYakindakiler.IsVisible = false; // ColYakindakiler yerine RefreshYakindakiler yazdık
+			RefreshOnerilenler.IsVisible = true;   // ColOnerilenler yerine RefreshOnerilenler yazdık
 
 			BtnOnerilenler.BackgroundColor = Color.FromArgb("#2D6A4F");
 			BtnOnerilenler.TextColor = Colors.White;
@@ -192,5 +193,89 @@ public partial class TimeLinePage : ContentPage
 		{
 			await Shell.Current.GoToAsync($"PostDetail?postId={secilenPaylasim.Id}", false);
 		}
+	}
+
+	private async void OnLikeTapped(object sender, TappedEventArgs e)
+	{
+		var layout = sender as BindableObject;
+		var secilenPaylasim = layout?.BindingContext as PostResponseDto;
+
+		if (secilenPaylasim != null)
+		{
+			Guid currentUserId = UserSession.Instance.UserId;
+
+			if (currentUserId != Guid.Empty)
+			{
+				try
+				{
+					// 1. API'ye beğeni isteği at
+					var newLikeCount = await _postService.ToggleLikeAsync(secilenPaylasim.Id, currentUserId);
+
+					if (newLikeCount.HasValue)
+					{
+						// 2. İşlemi Ana Ekrana (MainThread) taşı
+						MainThread.BeginInvokeOnMainThread(() =>
+						{
+							// Sayıyı güncelle
+							secilenPaylasim.LikeCount = newLikeCount.Value;
+
+							// ÇÖZÜM: MAUI'nin listeyi yenilemesi için öğeyi çıkarıp aynı yerine koyuyoruz
+
+							// Önce Yakındakiler listesinde mi diye bakıyoruz
+							int indexYakindaki = YakindakilerListesi.IndexOf(secilenPaylasim);
+							if (indexYakindaki >= 0)
+							{
+								YakindakilerListesi.RemoveAt(indexYakindaki);
+								YakindakilerListesi.Insert(indexYakindaki, secilenPaylasim);
+							}
+
+							// Önerilenler listesinde mi diye bakıyoruz
+							int indexOnerilen = OnerilenlerListesi.IndexOf(secilenPaylasim);
+							if (indexOnerilen >= 0)
+							{
+								OnerilenlerListesi.RemoveAt(indexOnerilen);
+								OnerilenlerListesi.Insert(indexOnerilen, secilenPaylasim);
+							}
+						});
+					}
+				}
+				catch (Exception ex)
+				{
+					System.Diagnostics.Debug.WriteLine($"Beğeni Hatası: {ex.Message}");
+				}
+			}
+			else
+			{
+				await DisplayAlert("Uyarı", "Beğeni yapmak için giriş yapmalısınız.", "Tamam");
+			}
+		}
+	}
+
+	private async void OnYakindakilerRefreshing(object sender, EventArgs e)
+	{
+		// 1. Sayfalama ayarlarını ve listeyi sıfırla
+		_yakindakilerPage = 1;
+		_hasMoreYakindakiler = true;
+		YakindakilerListesi.Clear();
+
+		// 2. API'den en güncel verileri tekrar çek
+		await LoadYakindakilerAsync();
+
+		// 3. Üstte dönen küçük yenileme çarkını kapat
+		RefreshYakindakiler.IsRefreshing = false;
+	}
+
+	private async void OnOnerilenlerRefreshing(object sender, EventArgs e)
+	{
+		// 1. Sayfalama ayarlarını ve listeyi sıfırla
+		_onerilenlerPage = 1;
+		_hasMoreOnerilenler = true;
+		OnerilenlerListesi.Clear();
+
+		// 2. API'den en güncel verileri tekrar çek
+		await LoadOnerilenlerAsync();
+
+		// 3. Üstte dönen küçük yenileme çarkını kapat
+		RefreshOnerilenler.IsRefreshing = false;
 	}
 }
