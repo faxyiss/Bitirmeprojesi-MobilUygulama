@@ -1,56 +1,160 @@
 using System.Collections.ObjectModel;
+using Bitirme_Projesi.Models;
+using Bitirme_Projesi.Services;
 
 namespace Bitirme_Projesi.Pages;
 
-// 1. VERİ MODELİ
-public class GorevModel
-{
-	public string Baslik { get; set; }
-	public int Puan { get; set; }
-	public string ResimUrl { get; set; }
-	public string Aciklama { get; set; }
-}
-
 public partial class TimeLinePage : ContentPage
 {
-	// 2. LİSTELER
-	public ObservableCollection<GorevModel> YakindakilerListesi { get; set; } = new();
-	public ObservableCollection<GorevModel> OnerilenlerListesi { get; set; } = new();
+	private readonly PostService _postService;
+	private int _yakindakilerPage = 1;
+	private int _onerilenlerPage = 1;
+	private const int PageSize = 10;
+
+	private bool _hasMoreYakindakiler = true;
+	private bool _hasMoreOnerilenler = true;
+
+	// Paralel API isteklerinin çakışmaması için iki ayrı bayrak (flag)
+	private bool _isYakindakilerLoading = false;
+	private bool _isOnerilenlerLoading = false;
+
+	public ObservableCollection<PostResponseDto> YakindakilerListesi { get; set; } = new();
+	public ObservableCollection<PostResponseDto> OnerilenlerListesi { get; set; } = new();
 
 	public TimeLinePage()
 	{
 		InitializeComponent();
 
-		// Verileri hemen bağlayalım (İçleri boş olsa da hata vermez)
+		_postService = new PostService();
+
 		ColYakindakiler.ItemsSource = YakindakilerListesi;
 		ColOnerilenler.ItemsSource = OnerilenlerListesi;
+
+		// Daha Fazla Yükle (Sona kaydırınca tetiklenir)
+		ColYakindakiler.RemainingItemsThreshold = 1;
+		ColYakindakiler.RemainingItemsThresholdReached += OnYakindakilerScrolledToBottom;
+
+		ColOnerilenler.RemainingItemsThreshold = 1;
+		ColOnerilenler.RemainingItemsThresholdReached += OnOnerilenlerScrolledToBottom;
 	}
 
-	// PERFORMANS: Sayfa açılırken donmayı engellemek için veriyi burada yüklüyoruz
 	protected override async void OnAppearing()
 	{
 		base.OnAppearing();
 
-		// Eğer listeler zaten doluysa tekrar yükleyip cihazı yormayalım
-		if (YakindakilerListesi.Count == 0)
+		// Sayfa İLK DEFA açılıyorsa (listeler boşsa)
+		if (YakindakilerListesi.Count == 0 && OnerilenlerListesi.Count == 0)
 		{
-			await Task.Delay(100); // Animasyonun bitmesi için minik bir nefes payı
-			VerileriYukle();
+			// 1. Önce sayfanın UI tasarımının ekrana tamamen çizilmesine izin ver (150ms)
+			// Bu sayede uygulama donmuş gibi hissettirmez.
+			await Task.Delay(150);
+
+			// 2. Çarkı gösterip verileri çekmeye başla
+			await IlkVerileriYukleAsync();
 		}
 	}
 
-	private void VerileriYukle()
+	private async Task IlkVerileriYukleAsync()
 	{
-		// Yakındakiler Verileri
-		YakindakilerListesi.Add(new GorevModel { Baslik = "Sahil Kenarı Plastik Atıkları", Puan = 50, ResimUrl = "dumy_photo.png", Aciklama = "Lodos sonrası sahile vuran plastik şişelerin temizlenmesi gerekiyor." });
-		YakindakilerListesi.Add(new GorevModel { Baslik = "Orman Yürüyüş Yolu", Puan = 75, ResimUrl = "dumy_photo.png", Aciklama = "Piknikçilerden kalan cam şişeler yangın riski taşıyor." });
+		// Çarkı görünür yap ve döndür
+		LoadingSpinner.IsVisible = true;
+		LoadingSpinner.IsRunning = true;
 
-		// Önerilenler Verileri
-		OnerilenlerListesi.Add(new GorevModel { Baslik = "Mahalle Parkı Temizliği", Puan = 30, ResimUrl = "dumy_photo.png", Aciklama = "Çocuk parkı etrafındaki ambalaj atıklarını temizleyin." });
-		OnerilenlerListesi.Add(new GorevModel { Baslik = "Göl Kenarı İyileştirme", Puan = 100, ResimUrl = "dumy_photo.png", Aciklama = "Yüksek puanlı endüstriyel temizlik görevi!" });
+		// İki listeyi PARALEL olarak çek (Sayfanın dolma hızını iki katına çıkarır)
+		await Task.WhenAll(LoadOnerilenlerAsync(), LoadYakindakilerAsync());
+
+		// Veriler geldi, çarkı gizle ve durdur
+		LoadingSpinner.IsRunning = false;
+		LoadingSpinner.IsVisible = false;
 	}
 
-	// SEKMELER ARASI GEÇİŞ
+	private async Task LoadOnerilenlerAsync()
+	{
+		if (_isOnerilenlerLoading || !_hasMoreOnerilenler) return;
+		_isOnerilenlerLoading = true;
+
+		try
+		{
+			var result = await _postService.GetRecommendedTimelineAsync(_onerilenlerPage, PageSize);
+			if (result != null)
+			{
+				foreach (var item in result.Items)
+				{
+					OnerilenlerListesi.Add(item);
+				}
+				_hasMoreOnerilenler = result.HasMore;
+				if (result.HasMore) _onerilenlerPage++;
+			}
+		}
+		catch (Exception ex)
+		{
+			System.Diagnostics.Debug.WriteLine($"Önerilenler Hatası: {ex.Message}");
+		}
+		finally
+		{
+			_isOnerilenlerLoading = false;
+		}
+	}
+
+	private async Task LoadYakindakilerAsync()
+	{
+		if (_isYakindakilerLoading || !_hasMoreYakindakiler) return;
+		_isYakindakilerLoading = true;
+
+		try
+		{
+			// Kullanıcının anlık konumunu al
+			var location = await Geolocation.Default.GetLastKnownLocationAsync() ??
+						   await Geolocation.Default.GetLocationAsync(new GeolocationRequest(GeolocationAccuracy.Medium));
+
+			if (location != null)
+			{
+				var result = await _postService.GetNearbyTimelineAsync(
+					(decimal)location.Latitude,
+					(decimal)location.Longitude,
+					_yakindakilerPage,
+					PageSize);
+
+				if (result != null)
+				{
+					foreach (var item in result.Items)
+					{
+						YakindakilerListesi.Add(item);
+					}
+					_hasMoreYakindakiler = result.HasMore;
+					if (result.HasMore) _yakindakilerPage++;
+				}
+			}
+		}
+		catch (FeatureNotSupportedException)
+		{
+			await DisplayAlert("Hata", "Cihazınız konum özelliğini desteklemiyor.", "Tamam");
+		}
+		catch (PermissionException)
+		{
+			await DisplayAlert("İzin Hatası", "Lütfen ayarlardan konum izni verin.", "Tamam");
+		}
+		catch (Exception ex)
+		{
+			System.Diagnostics.Debug.WriteLine($"Yakındakiler Hatası: {ex.Message}");
+		}
+		finally
+		{
+			_isYakindakilerLoading = false;
+		}
+	}
+
+	private async void OnYakindakilerScrolledToBottom(object sender, EventArgs e)
+	{
+		await LoadYakindakilerAsync();
+	}
+
+	private async void OnOnerilenlerScrolledToBottom(object sender, EventArgs e)
+	{
+		await LoadOnerilenlerAsync();
+	}
+
+	// --- SEKMELER ARASI GEÇİŞ ---
 	private void OnTabClicked(object sender, EventArgs e)
 	{
 		var button = sender as Button;
@@ -78,21 +182,15 @@ public partial class TimeLinePage : ContentPage
 		}
 	}
 
-	// "AÇ" BUTONUNA TIKLANDIĞINDA (GÖNDERİ DETAYI)
+	// --- DETAYA GİTME ---
 	private async void OnOpenPostTapped(object sender, TappedEventArgs e)
 	{
 		var layout = sender as BindableObject;
-		var secilenPaylasim = layout?.BindingContext as GorevModel;
+		var secilenPaylasim = layout?.BindingContext as PostResponseDto;
 
 		if (secilenPaylasim != null)
 		{
-			// Detay sayfasına gidiyoruz (Animasyonu donmaması için 'false' yaptık)
-			// Not: AppShell.xaml.cs içinde "PostDetail" rotasını kaydetmiş olmalısın
-			await Shell.Current.GoToAsync("PostDetail", false);
+			await Shell.Current.GoToAsync($"PostDetail?postId={secilenPaylasim.Id}", false);
 		}
 	}
-
-	// BOŞ METOTLAR (XAML'da tanımlıysa hata vermemesi için)
-	private void OnLikeTapped(object sender, TappedEventArgs e) { /* Beğeni mantığı */ }
-	private void OnCommentTapped(object sender, TappedEventArgs e) { /* Yorum mantığı */ }
 }

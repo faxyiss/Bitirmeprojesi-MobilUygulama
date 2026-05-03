@@ -117,6 +117,16 @@
                             ItemTemplate="{StaticResource GorevKartiSablonu}">
             </CollectionView>
 
+            <ActivityIndicator x:Name="LoadingSpinner"
+                               IsRunning="False"
+                               IsVisible="False"
+                               Color="#2D6A4F"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               WidthRequest="50"
+                               HeightRequest="50"
+                               ZIndex="10" />
+
         </Grid>
 
         <controls:NavigationBar Grid.Row="3"/>

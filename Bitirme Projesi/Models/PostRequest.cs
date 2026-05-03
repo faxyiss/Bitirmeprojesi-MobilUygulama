@@ -4,6 +4,11 @@ using System.Text;
 
 namespace Bitirme_Projesi.Models
 {
+	public class PagedResponseDto<T>
+	{
+		public List<T> Items { get; set; } = new List<T>();
+		public bool HasMore { get; set; }
+	}
 	public class PostResponseDto
 	{
 		public Guid Id { get; set; }
@@ -18,6 +23,10 @@ namespace Bitirme_Projesi.Models
 
 		public string FullAfterPhotoUrl => string.IsNullOrEmpty(AfterPhotoPath)
 			? "dumy_photo.png" : $"http://31.210.36.10:5000/Photos/{AfterPhotoPath}";
+
+		public int TaskPoint { get; set; }
+		public int LikeCount { get; set; }
+		public double? Distance { get; set; } // Yakındakiler sayfasında hesaba katılıp dolacak
 	}
 
 	public class PostDetailDto
@@ -44,4 +53,6 @@ namespace Bitirme_Projesi.Models
 		public string FullAfterPhotoUrl => string.IsNullOrEmpty(AfterPhotoPath)
 			? "dumy_photo.png" : $"http://31.210.36.10:5000/Photos/{AfterPhotoPath}";
 	}
+
+
 }
